@@ -42,8 +42,16 @@ function setupPolaroidWorkspace(workspace, backdrop) {
       src: "images/Nathan-Broxton-Headshot-2024-2-scaled-e1734927051247.jpg",
       caption: "Genuine Smile",
     },
-    { id: "hs7", src: "images/NATHAN-107.jpg", caption: "Contemplating" },
-    { id: "hs8", src: "images/NATHAN-111.jpg", caption: "Serious Portrayal" },
+    {
+      id: "hs7",
+      src: "images/NATHAN-107.jpg",
+      caption: "Contemplating",
+    },
+    {
+      id: "hs8",
+      src: "images/NATHAN-111.jpg",
+      caption: "Loving Life",
+    },
     {
       id: "hs9",
       src: "images/NATHAN-276.jpg",

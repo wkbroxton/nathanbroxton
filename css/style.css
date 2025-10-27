@@ -432,7 +432,6 @@ ul {
   background-color: var(--color-desk-surface);
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  /* z-index: 1; <-- Removed this */
 }
 
 .polaroid {
@@ -446,7 +445,6 @@ ul {
   user-select: none;
   touch-action: none;
   transform-origin: center;
-  /* Added transform/opacity transition back */
   transition: left 0.3s ease-out, top 0.3s ease-out, transform 0.3s ease-out,
     transform 0.1s ease-out, opacity 0.1s ease-out;
 }
@@ -467,7 +465,7 @@ ul {
   font-family: var(--font-caption);
   color: var(--color-text-dark);
   text-align: center;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   margin-top: 0.75rem;
 }
 
@@ -502,11 +500,9 @@ ul {
 
 .spotlight-backdrop.visible {
   display: block;
-  opacity: 1; /* Make fully opaque again */
 }
 
 /* --- HEADSHOT SPOTLIGHT (REVERTED) --- */
-/* This is the original rule before the position: fixed attempt */
 .polaroid.spotlight {
   top: 50% !important;
   left: 50% !important;
@@ -514,7 +510,6 @@ ul {
   z-index: 2000 !important; /* Original z-index */
   transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   cursor: default;
-  /* Re-apply a slightly stronger shadow to the whole polaroid */
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
 }
 
