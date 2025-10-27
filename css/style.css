@@ -506,11 +506,33 @@ ul {
 .polaroid.spotlight {
   top: 50% !important;
   left: 50% !important;
-  transform: translate(-50%, -50%) rotate(0deg) scale(1.4) !important; /* Original scale */
-  z-index: 2000 !important; /* Original z-index */
+
+  /* Use vw for responsive width on smaller screens */
+  width: 75vw !important;
+  height: auto !important; /* Maintain aspect ratio */
+
+  /* --- ADD THIS: Cap the maximum width on large screens --- */
+  max-width: 700px !important; /* Adjust 700px as needed */
+
+  /* Keep max-height constraint */
+  max-height: 80vh !important;
+
+  /* Keep centering transform */
+  transform: translate(-50%, -50%) rotate(0deg) !important;
+
+  z-index: 2000 !important;
   transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   cursor: default;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Ensure the image inside scales correctly */
+.polaroid.spotlight img {
+  width: 100%; /* Fill the container width */
+  height: 100%; /* Fill the container height */
+  object-fit: contain; /* Fit while maintaining aspect ratio */
+  border-radius: 5px; /* Keep this if you want rounded image corners */
+  box-shadow: none; /* Remove shadow from image if polaroid has it */
 }
 
 /* --- ABOUT (about.html) --- */
@@ -874,7 +896,7 @@ body:hover .cursor-follower {
 
 /* Mobile styles */
 @media (max-width: 767px) {
-  /* Mobile Navigation Styles from Section 2 are here */
+  /* Mobile Navigation Styles from Section 2 */
   .nav-links {
     position: fixed;
     top: 0;
@@ -887,7 +909,7 @@ body:hover .cursor-follower {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 3rem;
+    gap: 2rem;
     transform: translateX(100%);
     transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
   }
@@ -920,7 +942,7 @@ body:hover .cursor-follower {
     padding-right: 5%;
   }
   .hero-actions-container {
-    bottom: 15%;
+    bottom: 25%;
     width: 90%;
   }
 
@@ -951,9 +973,16 @@ body:hover .cursor-follower {
   .polaroid img {
     height: 150px;
   }
+
+  /* --- Mobile Spotlight Size (Adjusted) --- */
   .polaroid.spotlight {
-    transform: translate(-50%, -50%) rotate(0deg) scale(1.8) !important;
+    /* Make it slightly smaller on mobile, e.g., 85% of viewport width */
+    width: 85vw !important;
+    max-width: 85vw !important; /* Ensure vw is the primary constraint */
+    /* Keep max-height for very tall/narrow screens */
+    max-height: 75vh !important;
   }
+  /* --- End Mobile Spotlight Size --- */
 
   /* Mobile Cursor Hiding from Section 6.5 */
   .cursor-follower {
@@ -1002,16 +1031,34 @@ body:hover .cursor-follower {
   .polaroid img {
     height: 200px;
   }
-  /* Tablet spotlight size (same as default) */
-  .polaroid.spotlight {
-    transform: translate(-50%, -50%) rotate(0deg) scale(1.4) !important;
-  }
+
+  /* Tablet spotlight size will use the default rule:
+     (width: 75vw, max-width: 700px) */
 }
 
 /* Desktop styles */
 @media (min-width: 1024px) {
-  /* Larger spotlight for desktop if desired, but 1.4 is often good */
-  .polaroid.spotlight {
-    transform: translate(-50%, -50%) rotate(0deg) scale(1.4) !important;
+  /* No specific desktop spotlight override needed if the base rule
+    (width: 75vw, max-width: 700px) is desired for large screens too. */
+}
+
+/* --- ACCESSIBILITY OVERRIDES --- */
+/* This was Section 7, but logically fits better after base styles and responsiveness */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Remove parallax if needed */
+  /* .hero-section {
+    background-attachment: scroll;
+  } */
+
+  .scroll-down-arrow,
+  .polaroid,
+  .polaroid.spotlight,
+  .flip-card-inner {
+    animation: none;
+    transition: none;
   }
 }
