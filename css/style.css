@@ -872,6 +872,637 @@ body:hover .cursor-follower {
   box-shadow: 0 0 15px var(--color-accent);
 }
 
+/* --- 6.95 SOCIAL HUB STYLES (media.html) --- */
+
+#social-hub {
+  background: linear-gradient(
+    135deg,
+    #eee,
+    #fff
+  ); /* Subtle gradient background */
+  padding-top: 3rem;
+  padding-bottom: 4rem;
+}
+
+#social-hub h2 {
+  margin-bottom: 0.5rem;
+}
+
+.social-intro {
+  text-align: center;
+  color: #555;
+  margin-bottom: 2.5rem;
+}
+
+.social-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  max-width: 800px; /* Limit width */
+  margin: 0 auto;
+}
+
+.social-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem; /* Space between buttons */
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  margin-bottom: 1rem;
+}
+
+.social-button {
+  background-color: var(--color-light);
+  border: 2px solid #ddd;
+  border-radius: 50%; /* Circular buttons */
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden; /* For pseudo-element transition */
+}
+
+.social-button .platform-icon {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-dark);
+  transition: color 0.3s ease;
+  z-index: 2;
+}
+
+/* Platform-specific hover effects (using pseudo-elements) */
+.social-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  z-index: 1;
+}
+
+.social-button.tiktok::before {
+  background-color: #000;
+} /* TikTok Black */
+.social-button.instagram::before {
+  background: radial-gradient(
+    circle at 30% 107%,
+    #fdf497 0%,
+    #fdf497 5%,
+    #fd5949 45%,
+    #d6249f 60%,
+    #285aeb 90%
+  );
+} /* Instagram Gradient */
+.social-button.youtube::before {
+  background-color: #ff0000;
+} /* YouTube Red */
+.social-button.twitch::before {
+  background-color: #9146ff;
+} /* Twitch Purple */
+
+.social-button:hover::before,
+.social-button.active::before {
+  transform: scale(1.1); /* Grow effect */
+}
+
+.social-button:hover .platform-icon,
+.social-button.active .platform-icon {
+  color: #fff; /* White icon text on hover/active */
+}
+.social-button.instagram:hover .platform-icon, /* Keep Instagram icon dark for gradient */
+.social-button.instagram.active .platform-icon {
+  color: var(--color-dark);
+}
+
+.social-button:active {
+  transform: translateY(2px); /* Click feedback */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.social-display {
+  position: relative;
+  width: 100%;
+  min-height: 400px; /* Adjust as needed */
+  background-color: var(--color-light);
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden; /* Clip contents */
+}
+
+.social-feed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 15px; /* Padding around the embed */
+  opacity: 0;
+  transform: scale(0.95) translateY(10px);
+  pointer-events: none; /* Prevent interaction when hidden */
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.social-feed.active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto; /* Allow interaction when visible */
+  z-index: 10; /* Ensure active feed is on top */
+}
+
+/* Placeholder styling (if you keep them temporarily) */
+.embed-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  text-align: center;
+  font-family: var(--font-body);
+  color: #555;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.embed-placeholder small {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* Responsive adjustments for social hub */
+@media (max-width: 480px) {
+  .social-button {
+    width: 50px;
+    height: 50px;
+  }
+  .social-button .platform-icon {
+    font-size: 1.2rem;
+  }
+  .social-nav {
+    gap: 1rem;
+  }
+}
+
+/* --- 6.96 SOCIAL LINKS SECTION (media.html) --- */
+
+#social-links-section {
+  /* Optional: Add a distinct background or keep default */
+  background-color: var(--color-light); /* Or maybe var(--color-dark) */
+  color: var(--color-dark); /* Adjust text color if bg is dark */
+}
+
+#social-links-section h2 {
+  margin-bottom: 0.5rem;
+}
+
+#social-links-section .social-intro {
+  text-align: center;
+  color: #555; /* Adjust if bg is dark */
+  margin-bottom: 3rem;
+  font-size: 1.1rem;
+}
+
+.social-link-grid {
+  display: grid;
+  /* Creates 2 columns on medium screens, 4 on large */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px; /* Adjust max width */
+  margin: 0 auto;
+}
+
+.social-link-card {
+  background-color: #fff; /* Card background */
+  border-radius: 15px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden; /* For pseudo-elements */
+  border: 1px solid #eee; /* Subtle border */
+}
+
+.social-link-card::before {
+  /* Background color wash effect on hover */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 1;
+}
+
+.social-link-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+.social-link-card:hover::before {
+  opacity: 0.15; /* Wash intensity */
+  transform: scaleY(1);
+}
+
+/* Platform-specific wash colors */
+.social-link-card.tiktok:hover::before {
+  background-color: #000;
+}
+.social-link-card.instagram:hover::before {
+  background: linear-gradient(
+    45deg,
+    #f09433 0%,
+    #e6683c 25%,
+    #dc2743 50%,
+    #cc2366 75%,
+    #bc1888 100%
+  );
+  opacity: 0.2;
+}
+.social-link-card.youtube:hover::before {
+  background-color: #ff0000;
+}
+.social-link-card.twitch:hover::before {
+  background-color: #9146ff;
+}
+
+/* Ensure content stays above the wash */
+.social-link-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+.social-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.social-icon svg {
+  width: 30px;
+  height: 30px;
+  fill: #fff; /* White icon fill */
+}
+
+/* Specific icon background colors */
+.tiktok-icon {
+  background-color: #000;
+}
+.instagram-icon {
+  background: radial-gradient(
+    circle at 30% 107%,
+    #fdf497 0%,
+    #fdf497 5%,
+    #fd5949 45%,
+    #d6249f 60%,
+    #285aeb 90%
+  );
+}
+.instagram-icon svg {
+  fill: #fff;
+} /* Instagram icon is often white on gradient */
+.youtube-icon {
+  background-color: #ff0000;
+}
+.twitch-icon {
+  background-color: #9146ff;
+}
+
+.social-link-card:hover .social-icon {
+  transform: scale(1.1) rotate(-5deg); /* Bounce/rotate icon on hover */
+}
+
+.social-link-card h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+  color: var(--color-dark); /* Card title color */
+}
+
+.social-link-card p {
+  color: #666; /* Card description color */
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  min-height: 40px; /* Prevent height changes */
+}
+
+.social-cta {
+  /* Uses existing .cta-button style, but we can override */
+  padding: 0.6rem 1.5rem;
+  font-size: 0.9rem;
+  /* Optional: Add platform-specific border colors */
+  /* border-color: transparent; */
+  transition: all 0.3s ease;
+}
+
+.social-link-card.tiktok .social-cta {
+  border-color: #000;
+  color: #000;
+  background: transparent;
+}
+.social-link-card.tiktok .social-cta:hover {
+  background: #000;
+  color: #fff;
+}
+
+.social-link-card.instagram .social-cta {
+  border-color: #e1306c;
+  color: #e1306c;
+  background: transparent;
+}
+.social-link-card.instagram .social-cta:hover {
+  background: #e1306c;
+  color: #fff;
+}
+
+.social-link-card.youtube .social-cta {
+  border-color: #ff0000;
+  color: #ff0000;
+  background: transparent;
+}
+.social-link-card.youtube .social-cta:hover {
+  background: #ff0000;
+  color: #fff;
+}
+
+.social-link-card.twitch .social-cta {
+  border-color: #9146ff;
+  color: #9146ff;
+  background: transparent;
+}
+.social-link-card.twitch .social-cta:hover {
+  background: #9146ff;
+  color: #fff;
+}
+
+/* --- 6.97 SOCIAL POSTS GRID (media.html) --- */
+
+#social-posts-grid {
+  background-color: var(--color-dark); /* Dark section background */
+  color: var(--color-light);
+  padding: 5rem 5%;
+}
+
+#social-posts-grid h2 {
+  color: var(--color-light);
+  margin-bottom: 0.5rem;
+}
+
+#social-posts-grid .section-intro {
+  text-align: center;
+  color: #ccc;
+  margin-bottom: 3rem;
+  font-size: 1.1rem;
+}
+
+.social-grid-container {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(220px, 1fr)
+  ); /* Responsive grid, 4x4 effectively on large screens */
+  gap: 1.5rem; /* Space between cards */
+  max-width: 1000px; /* Limit overall grid width */
+  margin: 0 auto;
+}
+
+.social-post-card {
+  background-color: #2a2a2a; /* Darker card background */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.3s ease;
+  position: relative;
+}
+
+.social-post-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.social-post-card-image {
+  width: 100%;
+  height: 180px; /* Fixed height for image area */
+  object-fit: cover; /* Cover the area, cropping if necessary */
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.social-post-card:hover .social-post-card-image {
+  transform: scale(1.05);
+}
+
+.social-post-card-content {
+  padding: 1rem;
+  position: relative;
+}
+
+.card-platform-icon {
+  position: absolute;
+  top: -20px; /* Position above content */
+  left: 10px;
+  background-color: #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-platform-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.card-platform-icon.tiktok-icon svg {
+  fill: #000;
+}
+.card-platform-icon.instagram-icon svg {
+  fill: url(#instagramGradientSmall);
+} /* Use SVG gradient */
+.card-platform-icon.youtube-icon svg {
+  fill: #ff0000;
+}
+.card-platform-icon.twitch-icon svg {
+  fill: #9146ff;
+}
+
+.social-post-card h3 {
+  font-size: 1.1rem;
+  margin-top: 0.5rem; /* Space from icon */
+  margin-bottom: 0.5rem;
+  color: var(--color-light);
+  min-height: 48px; /* Ensure consistent height for titles across cards */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit title to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.social-post-card p {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-bottom: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit caption to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Social Post Spotlight Modal --- */
+#social-post-backdrop {
+  /* Reuses .spotlight-backdrop from headshots for the dark overlay */
+  z-index: 1550; /* Slightly higher than headshot backdrop */
+}
+
+.social-post-spotlight {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.7); /* Starts smaller */
+  opacity: 0;
+  pointer-events: none;
+  background-color: var(
+    --color-light
+  ); /* Light background for the modal itself */
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-width: 650px; /* Max width for desktop */
+  width: 90vw; /* Responsive width */
+  max-height: 90vh; /* Max height */
+  overflow-y: auto; /* Scroll if content is too long */
+  display: flex;
+  flex-direction: column;
+  z-index: 1600; /* Above backdrop */
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.social-post-spotlight.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.spotlight-header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+  gap: 1rem;
+}
+
+.spotlight-platform-logo {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.spotlight-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--color-dark);
+}
+
+.spotlight-body {
+  padding: 1.5rem;
+}
+
+.spotlight-image {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.spotlight-caption {
+  font-size: 1rem;
+  color: var(--color-dark);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.spotlight-link {
+  display: block; /* Make it a block element */
+  width: fit-content;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+
+/* --- Responsive adjustments for Social Posts Grid --- */
+@media (max-width: 767px) {
+  .social-grid-container {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(180px, 1fr)
+    ); /* Smaller cards on mobile */
+    gap: 1rem;
+  }
+  .social-post-card-image {
+    height: 150px; /* Shorter image height on mobile */
+  }
+  .social-post-card h3 {
+    font-size: 1rem;
+    min-height: 40px;
+  }
+  .social-post-card p {
+    font-size: 0.8rem;
+  }
+  .social-post-spotlight {
+    width: 95vw;
+    max-width: 95vw;
+    max-height: 85vh;
+  }
+  .spotlight-header {
+    padding: 1rem;
+  }
+  .spotlight-header h3 {
+    font-size: 1.1rem;
+  }
+  .spotlight-body {
+    padding: 1rem;
+  }
+  .spotlight-image {
+    max-height: 300px;
+    margin-bottom: 1rem;
+  }
+  .spotlight-caption {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  .spotlight-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
 /* --- 7. ACCESSIBILITY --- */
 @media (prefers-reduced-motion: reduce) {
   html {
