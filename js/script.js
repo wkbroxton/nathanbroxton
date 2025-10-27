@@ -181,10 +181,9 @@ const socialPostData = [
 ];
 
 /**
- * 1. POLAROID WORKSPACE (Using original spotlight method, with dblclick fix)
+ * 1. POLAROID WORKSPACE (Simplified Double-Click Logic)
  */
 function setupPolaroidWorkspace(workspace, backdrop) {
-  // Renamed param for clarity
   const polaroidData = [
     // ... (Your polaroid data remains the same) ...
     { id: "hs1", src: "images/NATHAN-260.jpeg", caption: "Theatrical Look" },
@@ -222,8 +221,9 @@ function setupPolaroidWorkspace(workspace, backdrop) {
   let allPolaroids = [];
   let activePolaroid = null;
   let currentZIndex = 10;
-  let hasDragged = false; // Flag to differentiate click/drag
-  let lastX, lastY; // For calculating drag delta
+  // let hasDragged = false; // We won't use this specific flag anymore
+  let isDragging = false; // Track if actual dragging occurred
+  let startX, startY, lastX, lastY;
 
   // --- Helper: Check for overlap ---
   function isOverlapping(rect1, rect2) {
@@ -247,13 +247,14 @@ function setupPolaroidWorkspace(workspace, backdrop) {
         `;
 
     const workspaceRect = workspace.getBoundingClientRect();
-    // Slightly more centered initial placement
-    const startX = workspaceRect.width / 2 - 100 + (Math.random() - 0.5) * 40;
-    const startY = workspaceRect.height / 2 - 135 + (Math.random() - 0.5) * 40;
-    const startRotate = (Math.random() - 0.5) * 15; // Slightly less rotation
+    const initialLeft =
+      workspaceRect.width / 2 - 100 + (Math.random() - 0.5) * 40;
+    const initialTop =
+      workspaceRect.height / 2 - 135 + (Math.random() - 0.5) * 40;
+    const startRotate = (Math.random() - 0.5) * 15;
 
-    polaroid.style.left = `${startX}px`;
-    polaroid.style.top = `${startY}px`;
+    polaroid.style.left = `${initialLeft}px`;
+    polaroid.style.top = `${initialTop}px`;
     polaroid.style.transform = `rotate(${startRotate}deg)`;
     polaroid.style.zIndex = index + 1;
 
@@ -266,72 +267,44 @@ function setupPolaroidWorkspace(workspace, backdrop) {
     polaroid.addEventListener("dblclick", showSpotlight);
   });
 
-  // --- Drag Functions (Using relative delta calculation) ---
+  // --- Drag Functions ---
   function dragStart(e) {
-    hasDragged = false; // Reset drag flag at the start of interaction
-    activePolaroid = e.target.closest(".polaroid");
-
     // Prevent starting drag if spotlight is active or no polaroid clicked
-    if (!activePolaroid || backdrop.classList.contains("visible")) return;
+    if (backdrop.classList.contains("visible")) return;
 
-    // Prevent default text selection/image drag ONLY, let click chain proceed
-    if (e.type === "mousedown") {
-      // Only prevent default on mousedown for non-interactive elements if needed
-      // e.preventDefault(); // Keep commented out for now
+    activePolaroid = e.target.closest(".polaroid");
+    if (!activePolaroid) return;
+
+    isDragging = false; // Reset dragging flag
+
+    // Record start coordinates
+    if (e.type === "touchstart") {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      lastX = startX;
+      lastY = startY;
+      // Don't preventDefault yet on touchstart
+    } else {
+      startX = e.clientX;
+      startY = e.clientY;
+      lastX = startX;
+      lastY = startY;
+      // e.preventDefault(); // REMOVED from here
     }
 
     currentZIndex++;
     activePolaroid.style.zIndex = currentZIndex;
-    // Don't add 'dragging' class immediately, wait for movement in drag()
+    // Don't add 'dragging' class yet
 
-    if (e.type === "touchstart") {
-      lastX = e.touches[0].clientX;
-      lastY = e.touches[0].clientY;
-    } else {
-      lastX = e.clientX;
-      lastY = e.clientY;
-    }
-
-    // Add listeners to the window for movement tracking
     window.addEventListener("mousemove", drag);
     window.addEventListener("mouseup", dragEnd);
-    window.addEventListener("touchmove", drag, { passive: false }); // Need false to prevent scroll
+    window.addEventListener("touchmove", drag, { passive: false });
     window.addEventListener("touchend", dragEnd);
     window.addEventListener("touchcancel", dragEnd);
   }
 
   function drag(e) {
     if (!activePolaroid) return;
-
-    // Set hasDragged to true ONLY if movement actually occurs
-    if (!hasDragged) {
-      // Check threshold before setting hasDragged
-      let currentXCheck, currentYCheck;
-      if (e.type === "touchmove") {
-        currentXCheck = e.touches[0].clientX;
-        currentYCheck = e.touches[0].clientY;
-      } else {
-        currentXCheck = e.clientX;
-        currentYCheck = e.clientY;
-      }
-      const moveThreshold = 5;
-      if (
-        Math.abs(currentXCheck - lastX) > moveThreshold ||
-        Math.abs(currentYCheck - lastY) > moveThreshold
-      ) {
-        hasDragged = true;
-        activePolaroid.classList.add("dragging"); // Add class on first move
-        console.log("Drag confirmed, adding class"); // Debug
-      }
-    }
-
-    // Only proceed if dragging confirmed
-    if (!hasDragged) return;
-
-    // Prevent scrolling ONLY when dragging (touch)
-    if (e.type === "touchmove") {
-      e.preventDefault();
-    }
 
     let currentX, currentY;
     if (e.type === "touchmove") {
@@ -342,12 +315,26 @@ function setupPolaroidWorkspace(workspace, backdrop) {
       currentY = e.clientY;
     }
 
-    // Calculate change from last position
+    // Check threshold *before* preventing default and setting isDragging
+    const moveThreshold = 5;
+    if (
+      !isDragging &&
+      (Math.abs(currentX - startX) > moveThreshold ||
+        Math.abs(currentY - startY) > moveThreshold)
+    ) {
+      isDragging = true;
+      activePolaroid.classList.add("dragging"); // Add class when drag confirmed
+    }
+
+    if (!isDragging) return; // Only proceed if dragging is confirmed
+
+    // NOW prevent default (prevents scrolling etc. *during* drag)
+    e.preventDefault();
+
+    // Calculate change from last position for smooth relative movement
     const deltaX = currentX - lastX;
     const deltaY = currentY - lastY;
-
-    // Update last position for the next frame BEFORE calculating new position
-    lastX = currentX;
+    lastX = currentX; // Update last position for next frame
     lastY = currentY;
 
     // Calculate new position
@@ -355,23 +342,19 @@ function setupPolaroidWorkspace(workspace, backdrop) {
     let newTop = parseFloat(activePolaroid.style.top) + deltaY;
 
     // --- Boundary Check Logic ---
-    const polaroidRect = activePolaroid.getBoundingClientRect(); // Get current size
+    const polaroidRect = activePolaroid.getBoundingClientRect();
     const minLeft = 0;
     const maxLeft = workspace.offsetWidth - polaroidRect.width;
     const minTop = 0;
     const maxTop = workspace.offsetHeight - polaroidRect.height;
-
-    // Clamp the position (constrain it within the boundaries)
     newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
     newTop = Math.max(minTop, Math.min(newTop, maxTop));
-
-    // Apply the constrained position
     activePolaroid.style.left = `${newLeft}px`;
     activePolaroid.style.top = `${newTop}px`;
     // --- End Boundary Check ---
 
     // --- Nudge Logic ---
-    const activeRectNow = activePolaroid.getBoundingClientRect(); // Get updated rect
+    const activeRectNow = activePolaroid.getBoundingClientRect();
     allPolaroids.forEach((other) => {
       if (other === activePolaroid) return;
       const otherRect = other.getBoundingClientRect();
@@ -387,23 +370,16 @@ function setupPolaroidWorkspace(workspace, backdrop) {
           (activeRectNow.top + activeRectNow.height / 2);
         const pushStrength = 2;
         const magnitude = Math.sqrt(dx * dx + dy * dy);
-        if (magnitude === 0) return; // Avoid divide by zero
+        if (magnitude === 0) return;
         const pushX = (dx / magnitude) * pushStrength;
         const pushY = (dy / magnitude) * pushStrength;
-
-        // Apply nudge based on current position
         let nudgeLeft = parseFloat(other.style.left) + pushX;
         let nudgeTop = parseFloat(other.style.top) + pushY;
-
-        // Also clamp nudged position
-        const otherPolaroidRect = other.getBoundingClientRect(); // Get nudged polaroid size
-        const otherMinLeft = 0; // Assuming same min constraints
+        const otherPolaroidRect = other.getBoundingClientRect();
         const otherMaxLeft = workspace.offsetWidth - otherPolaroidRect.width;
-        const otherMinTop = 0;
         const otherMaxTop = workspace.offsetHeight - otherPolaroidRect.height;
-        nudgeLeft = Math.max(otherMinLeft, Math.min(nudgeLeft, otherMaxLeft));
-        nudgeTop = Math.max(otherMinTop, Math.min(nudgeTop, otherMaxTop));
-
+        nudgeLeft = Math.max(minLeft, Math.min(nudgeLeft, otherMaxLeft));
+        nudgeTop = Math.max(minTop, Math.min(nudgeTop, otherMaxTop));
         other.style.left = `${nudgeLeft}px`;
         other.style.top = `${nudgeTop}px`;
       } else {
@@ -425,51 +401,42 @@ function setupPolaroidWorkspace(workspace, backdrop) {
       allPolaroids.forEach((other) => other.classList.remove("pushed"));
       activePolaroid = null; // Clear the active polaroid
     }
-    // hasDragged flag state is critical for showSpotlight's logic
-    // It's checked within the setTimeout there.
-    // Resetting it here might happen too soon, let the timeout handle it.
+    // Crucially, reset isDragging *after* listeners are removed
+    // Use a small timeout to ensure this happens AFTER any potential dblclick check
+    setTimeout(() => {
+      isDragging = false;
+      console.log("Drag end timeout: isDragging reset:", isDragging); // Debug
+    }, 0); // Minimal timeout
   }
 
-  // --- Spotlight Functions (Using original method + setTimeout fix) ---
+  // --- Spotlight Functions (Simplified Check) ---
   function showSpotlight(e) {
-    // Use setTimeout to allow dragEnd to potentially set hasDragged = true
-    // before this check runs.
-    setTimeout(() => {
-      // If hasDragged became true during the mousemove/touchmove, ignore.
-      if (hasDragged === true) {
-        console.log("Drag detected (in timeout), ignoring dblclick."); // Debug
-        // Reset hasDragged flag AFTER the check, ready for next interaction
-        hasDragged = false;
-        return;
-      }
+    console.log("dblclick event fired. isDragging:", isDragging); // Debug
 
-      // --- Proceed with showing spotlight on the original polaroid ---
-      const polaroid = e.currentTarget;
+    // If isDragging is true (meaning drag() was called and set it), ignore.
+    if (isDragging) {
+      console.log("isDragging is true, ignoring dblclick."); // Debug
+      return;
+    }
 
-      // Also check if backdrop is already visible or element is missing/already spotlighted
-      if (
-        !polaroid ||
-        polaroid.classList.contains("spotlight") ||
-        backdrop.classList.contains("visible")
-      ) {
-        console.log(
-          "Spotlight prevent: Conditions not met (missing element, already active, or drag)."
-        ); // Debug
-        // Reset hasDragged here if we prevented spotlight due to drag state ambiguity
-        if (hasDragged === undefined) hasDragged = false;
-        return;
-      }
+    const polaroid = e.currentTarget;
+    // Also check if backdrop is already visible or element is missing/already spotlighted
+    if (
+      !polaroid ||
+      polaroid.classList.contains("spotlight") ||
+      backdrop.classList.contains("visible")
+    ) {
+      console.log("Spotlight prevent: Conditions not met."); // Debug
+      return;
+    }
 
-      if (backdrop) {
-        backdrop.classList.add("visible");
-        polaroid.classList.add("spotlight");
-        console.log("Showing spotlight for polaroid:", polaroid.id); // Debug
-      } else {
-        console.error("Backdrop element not found!"); // Debug
-      }
-      // Reset hasDragged after successfully showing spotlight
-      hasDragged = false;
-    }, 50); // Small delay (50ms) seems reasonable
+    if (backdrop) {
+      backdrop.classList.add("visible");
+      polaroid.classList.add("spotlight");
+      console.log("Showing spotlight for polaroid:", polaroid.id); // Debug
+    } else {
+      console.error("Backdrop element not found!"); // Debug
+    }
   }
 
   function hideSpotlight() {
@@ -479,8 +446,8 @@ function setupPolaroidWorkspace(workspace, backdrop) {
       spotlighted.classList.remove("spotlight");
       console.log("Hiding spotlight for polaroid:", spotlighted.id); // Debug
     }
-    // Reset hasDragged here when closing spotlight explicitly
-    hasDragged = false;
+    // Reset isDragging flag just in case when closing spotlight explicitly
+    isDragging = false;
   }
 
   // --- Final Event Listener ---
@@ -538,20 +505,19 @@ function setupCursorFollower() {
 function setupScrollReveal() {
   const elementsToReveal = document.querySelectorAll(".reveal-on-scroll");
   if (elementsToReveal.length === 0) {
-    console.log("No elements found with .reveal-on-scroll"); // Debug
+    // console.log("No elements found with .reveal-on-scroll"); // Debug
     return;
   }
-  console.log(`Found ${elementsToReveal.length} elements to reveal.`); // Debug
+  // console.log(`Found ${elementsToReveal.length} elements to reveal.`); // Debug
 
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          console.log(
-            "Element intersecting:",
-            entry.target.id || entry.target.tagName
-          ); // Debug
+          // console.log("Element intersecting:", entry.target.id || entry.target.tagName); // Debug
           entry.target.classList.add("is-visible");
+          // Optional: Stop observing after reveal
+          // observer.unobserve(entry.target);
         }
         // else { entry.target.classList.remove("is-visible"); } // Optional re-animate
       });
@@ -560,7 +526,7 @@ function setupScrollReveal() {
   );
 
   elementsToReveal.forEach((element) => {
-    console.log("Observing element:", element.id || element.tagName); // Debug
+    // console.log("Observing element:", element.id || element.tagName); // Debug
     observer.observe(element);
   });
 }
@@ -653,7 +619,7 @@ function setupSocialPostsGrid() {
   const spotlight = document.getElementById("social-post-spotlight");
 
   if (!container || !spotlightBackdrop || !spotlight) {
-    console.log("Social Posts Grid elements not found, skipping setup."); // Debug
+    // console.log("Social Posts Grid elements not found, skipping setup."); // Debug
     return; // Exit if elements aren't found
   }
 
@@ -744,6 +710,8 @@ function setupSocialPostsGrid() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
+            // Optional: Stop observing after reveal to save resources
+            // observer.unobserve(entry.target);
           }
         });
       },

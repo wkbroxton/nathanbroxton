@@ -810,6 +810,37 @@ body:hover .cursor-follower {
   margin-top: 1rem;
 }
 
+/* Container to maintain video aspect ratio (16:9) */
+.timeline-video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+  height: 0;
+  overflow: hidden;
+  margin-top: 1rem; /* Space above video */
+  margin-bottom: 1rem; /* Space below video */
+  border-radius: 8px; /* Match card radius */
+  background-color: #000; /* Black background while loading */
+}
+
+.timeline-video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0; /* Remove default iframe border */
+}
+
+/* Optional: Adjust spacing if a video item is used */
+.timeline-content.video-item h3 {
+  margin-bottom: 0.5rem; /* Less space below title if video follows */
+}
+
+/* Remove default image margin if video is present */
+.timeline-content.video-item img {
+  display: none; /* Hide default image if video container exists */
+}
+
 /* --- 6.9 INTERACTIVE REELS PAGE --- */
 .main-reel-viewer {
   position: relative;
