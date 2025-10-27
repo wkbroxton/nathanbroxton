@@ -384,6 +384,9 @@ function setupScrollReveal() {
 /**
  * 5. INTERACTIVE REEL VIEWER
  */
+/**
+ * 5. INTERACTIVE REEL VIEWER
+ */
 function setupReelViewer() {
   const mainPlayer = document.getElementById("main-reel-player");
   const thumbnails = document.querySelectorAll(".reel-thumbnail");
@@ -397,6 +400,47 @@ function setupReelViewer() {
       mainPlayer.setAttribute("title", videoTitle);
       thumbnails.forEach((t) => t.classList.remove("is-active"));
       thumb.classList.add("is-active");
+    });
+  });
+}
+
+// Select the main video player and all the thumbnails
+const mainVideoPlayer = document.getElementById("main-reel-player");
+const thumbnails = document.querySelectorAll(".reel-thumbnail");
+
+// Make sure the player element exists before adding listeners
+if (mainVideoPlayer) {
+  // Loop through each thumbnail
+  thumbnails.forEach((thumbnail) => {
+    // Add a click event listener to each one
+    thumbnail.addEventListener("click", (event) => {
+      // Prevent default behavior (like following a link if it was one)
+      event.preventDefault();
+
+      // 1. Get the video source from the 'data-src' attribute
+      const videoSrc = thumbnail.getAttribute("data-src");
+
+      // 2. Set the main player's 'src' to the new video source
+      mainVideoPlayer.src = videoSrc;
+
+      // 3. Load and play the new video
+      mainVideoPlayer.load(); // Load the new source
+
+      // We ask it to play, and add .catch() to prevent errors
+      // if the browser blocks it.
+      mainVideoPlayer.play().catch((error) => {
+        console.warn("Autoplay was prevented: ", error);
+      });
+
+      // 4. Update the 'is-active' class for styling
+      // Find the currently active thumbnail and remove the class
+      const currentActive = document.querySelector(".reel-thumbnail.is-active");
+      if (currentActive) {
+        currentActive.classList.remove("is-active");
+      }
+
+      // Add 'is-active' to the thumbnail that was just clicked
+      thumbnail.classList.add("is-active");
     });
   });
 }
