@@ -209,7 +209,7 @@ function setupPolaroidWorkspace(workspace, backdrop) {
       caption: "Genuine Smile",
     },
     { id: "hs7", src: "images/NATHAN-107.jpg", caption: "Contemplating" },
-    { id: "hs8", src: "images/NATHAN-111.jpg", caption: "Serious Portrayal" },
+    { id: "hs8", src: "images/NATHAN-111.jpg", caption: "Enjoying Life" },
     {
       id: "hs9",
       src: "images/NATHAN-276.jpg",
