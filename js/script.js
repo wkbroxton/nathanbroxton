@@ -32,7 +32,7 @@ const socialPostData = [
     id: "sp2",
     platform: "instagram",
     platformLogo: "images/instagram-logo.svg",
-    image: "images/CatNip1.png",
+    image: "images/Catnip1.png",
     title: "Important Questions",
     caption: "Seriously. What is CatNip?",
     link: "https://www.instagram.com/p/DO4NNpLkis1/",
