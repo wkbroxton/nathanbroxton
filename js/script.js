@@ -497,6 +497,29 @@ function setupCursorFollower() {
   }
 }
 
+// 1. If the page loads with #home, strip it immediately
+if (window.location.hash === "#home") {
+  history.replaceState(null, null, window.location.pathname);
+}
+
+// 2. Intercept the "Home" link click
+const homeLink = document.querySelector(".nav-link-home");
+
+if (homeLink) {
+  homeLink.addEventListener("click", (e) => {
+    e.preventDefault(); // Stop the link from adding #home to the URL
+
+    // Smooth scroll to top
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+
+    // Clean the URL (remove hash)
+    history.pushState(null, null, window.location.pathname);
+  });
+}
+
 /**
  * 4. APPEAR ON SCROLL
  */
