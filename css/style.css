@@ -8,8 +8,8 @@
 
   /* NEW: Variables for Polaroids */
   --font-caption: "Kalam", cursive;
-  --color-desk-bg: #3d2c1f;
-  --color-desk-surface: #5a4b3f;
+  --color-desk-bg: #1a1a1a;
+  --color-desk-surface: #01b4f5;
   --color-polaroid-bg: #fff;
   --color-text-dark: #333;
 }

@@ -186,7 +186,8 @@ const socialPostData = [
 function setupPolaroidWorkspace(workspace, backdrop) {
   const polaroidData = [
     // ... (Your polaroid data remains the same) ...
-    { id: "hs1", src: "images/NATHAN-260.jpeg", caption: "Theatrical Look" },
+    { id: "hs1", src: "images/NATHAN-260.jpeg", caption: "Your Next Casting" },
+
     {
       id: "hs2",
       src: "images/NATHAN BROXTON - Commercial Colorful.JPG",
